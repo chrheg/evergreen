@@ -250,7 +250,9 @@ class TestCheckPendingPullsForDuplicates(unittest.TestCase):
         mock_pull_request.head.ref = "dependabot-branch"
         mock_repo.pull_requests.return_value = [mock_pull_request]
 
-        result = check_pending_pulls_for_duplicates(mock_pull_request.head.ref, mock_repo)
+        result = check_pending_pulls_for_duplicates(
+            mock_pull_request.head.ref, mock_repo
+        )
 
         # Assert that the function returned the expected result
         self.assertEqual(result, True)
@@ -352,13 +354,7 @@ class TestGetGlobalProjectId(unittest.TestCase):
             "query": f'query{{organization(login: "{organization}") {{projectV2(number: {number}){{id}}}}}}'
         }
         expected_response = {
-            "data": {
-                "organization": {
-                    "projectV2": {
-                        "id": "my_project_id"
-                    }
-                }
-            }
+            "data": {"organization": {"projectV2": {"id": "my_project_id"}}}
         }
 
         mock_post.return_value.status_code = 200
@@ -453,7 +449,7 @@ class TestGetGlobalPullRequestID(unittest.TestCase):
         # Check that the result is as expected
         self.assertEqual(result, 'test_id')
 
-    @patch('requests.post')
+    @patch("requests.post")
     def test_get_global_pr_id_request_exception(self, mock_post):
         """Test the get_global_pr_id function when the request fails."""
         # Mock requests.post to raise a RequestException
@@ -465,7 +461,7 @@ class TestGetGlobalPullRequestID(unittest.TestCase):
         # Check that the result is None
         self.assertIsNone(result)
 
-    @patch('requests.post')
+    @patch("requests.post")
     def test_get_global_pr_id_key_error(self, mock_post):
         """Test the get_global_pr_id function when the response cannot be parsed."""
         # Mock the response from requests.post
