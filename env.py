@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 
 def get_env_vars() -> (
-    tuple[str | None, list[str], str, str, list[str], str, str, str, str | None, bool]
+    tuple[str | None, list[str], str, str, list[str], str, str, str, str | None, bool, str | None]
 ):
     """
     Get the environment variables for use in the action.

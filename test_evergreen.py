@@ -2,8 +2,8 @@
 import unittest
 import uuid
 from unittest.mock import MagicMock, patch
-import requests
 
+import requests
 from evergreen import (
     check_pending_issues_for_duplicates,
     check_pending_pulls_for_duplicates,
