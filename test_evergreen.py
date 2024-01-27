@@ -11,9 +11,9 @@ from evergreen import (
     enable_dependabot_security_updates,
     get_global_pr_id,
     get_global_project_id,
-    link_item_to_project,
     get_repos_iterator,
     is_dependabot_security_updates_enabled,
+    link_item_to_project,
 )
 
 
@@ -403,13 +403,7 @@ class TestGetGlobalProjectId(unittest.TestCase):
         expected_data = {
             "query": f'query{{organization(login: "{organization}") {{projectV2(number: {number}){{id}}}}}}'
         }
-        expected_response = {
-            "data": {
-                "organization": {
-                    "projectV2": {}
-                }
-            }
-        }
+        expected_response = {"data": {"organization": {"projectV2": {}}}}
 
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = expected_response
@@ -426,28 +420,23 @@ class TestGetGlobalProjectId(unittest.TestCase):
 
 class TestGetGlobalPullRequestID(unittest.TestCase):
     """Test the get_global_pr_id function in evergreen.py"""
-    @patch('requests.post')
+
+    @patch("requests.post")
     def test_get_global_pr_id_success(self, mock_post):
         """Test the get_global_pr_id function when the request is successful."""
         # Mock the response from requests.post
         mock_response = MagicMock()
         mock_response.raise_for_status.return_value = None
         mock_response.json.return_value = {
-            'data': {
-                'repository': {
-                    'pullRequest': {
-                        'id': 'test_id'
-                    }
-                }
-            }
+            "data": {"repository": {"pullRequest": {"id": "test_id"}}}
         }
         mock_post.return_value = mock_response
 
         # Call the function with test data
-        result = get_global_pr_id('test_token', 'test_org', 'test_repo', 1)
+        result = get_global_pr_id("test_token", "test_org", "test_repo", 1)
 
         # Check that the result is as expected
-        self.assertEqual(result, 'test_id')
+        self.assertEqual(result, "test_id")
 
     @patch("requests.post")
     def test_get_global_pr_id_request_exception(self, mock_post):
@@ -456,7 +445,7 @@ class TestGetGlobalPullRequestID(unittest.TestCase):
         mock_post.side_effect = requests.exceptions.RequestException
 
         # Call the function with test data
-        result = get_global_pr_id('test_token', 'test_org', 'test_repo', 1)
+        result = get_global_pr_id("test_token", "test_org", "test_repo", 1)
 
         # Check that the result is None
         self.assertIsNone(result)
@@ -471,7 +460,7 @@ class TestGetGlobalPullRequestID(unittest.TestCase):
         mock_post.return_value = mock_response
 
         # Call the function with test data
-        result = get_global_pr_id('test_token', 'test_org', 'test_repo', 1)
+        result = get_global_pr_id("test_token", "test_org", "test_repo", 1)
 
         # Check that the result is None
         self.assertIsNone(result)
