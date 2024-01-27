@@ -92,7 +92,9 @@ def main():  # pragma: no cover
                 issue = repo.create_issue(title, body)
                 print("\tCreated issue " + issue.html_url)
                 if project_id:
-                    issue_id = get_global_issue_id(token, organization, repo.name, issue.number)
+                    issue_id = get_global_issue_id(
+                        token, organization, repo.name, issue.number
+                    )
                     link_item_to_project(token, project_id, issue_id)
                     print("\tLinked issue to project " + project_id)
         else:
@@ -106,7 +108,9 @@ def main():  # pragma: no cover
                     pull = commit_changes(title, body, repo, dependabot_file)
                     print("\tCreated pull request " + pull.html_url)
                     if project_id:
-                        pr_id = get_global_pr_id(token, organization, repo.name, pull.number)
+                        pr_id = get_global_pr_id(
+                            token, organization, repo.name, pull.number
+                        )
                         link_item_to_project(token, project_id, pr_id)
                         print("\tLinked pull request to project " + project_id)
                 except github3.exceptions.NotFoundError:
@@ -210,7 +214,9 @@ def get_global_project_id(token, organization, number):
     """Fetches the project ID from GitHub's GraphQL API."""
     url = "https://api.github.com/graphql"
     headers = {"Authorization": f"Bearer {token}"}
-    data = {"query": f'query{{organization(login: "{organization}") {{projectV2(number: {number}){{id}}}}}}'}
+    data = {
+        "query": f'query{{organization(login: "{organization}") {{projectV2(number: {number}){{id}}}}}}'
+    }
 
     try:
         response = requests.post(url, headers=headers, json=data, timeout=20)
@@ -220,7 +226,7 @@ def get_global_project_id(token, organization, number):
         return None
 
     try:
-        return response.json()['data']['organization']['projectV2']['id']
+        return response.json()["data"]["organization"]["projectV2"]["id"]
     except KeyError as e:
         print(f"Failed to parse response: {e}")
         return None
@@ -231,7 +237,7 @@ def get_global_issue_id(token, organization, repository, issue_number):
     url = "https://api.github.com/graphql"
     headers = {"Authorization": f"Bearer {token}"}
     data = {
-        "query": f'''
+        "query": f"""
         query {{
           repository(owner: "{organization}", name: "{repository}") {{
             issue(number: {issue_number}) {{
@@ -239,7 +245,7 @@ def get_global_issue_id(token, organization, repository, issue_number):
             }}
           }}
         }}
-        '''
+        """
     }
 
     try:
@@ -250,7 +256,7 @@ def get_global_issue_id(token, organization, repository, issue_number):
         return None
 
     try:
-        return response.json()['data']['repository']['issue']['id']
+        return response.json()["data"]["repository"]["issue"]["id"]
     except KeyError as e:
         print(f"Failed to parse response: {e}")
         return None
@@ -261,7 +267,7 @@ def get_global_pr_id(token, organization, repository, pr_number):
     url = "https://api.github.com/graphql"
     headers = {"Authorization": f"Bearer {token}"}
     data = {
-        "query": f'''
+        "query": f"""
         query {{
           repository(owner: "{organization}", name: "{repository}") {{
             pullRequest(number: {pr_number}) {{
@@ -269,7 +275,7 @@ def get_global_pr_id(token, organization, repository, pr_number):
             }}
           }}
         }}
-        '''
+        """
     }
 
     try:
@@ -280,7 +286,7 @@ def get_global_pr_id(token, organization, repository, pr_number):
         return None
 
     try:
-        return response.json()['data']['repository']['pullRequest']['id']
+        return response.json()["data"]["repository"]["pullRequest"]["id"]
     except KeyError as e:
         print(f"Failed to parse response: {e}")
         return None
@@ -301,6 +307,7 @@ def link_item_to_project(token, project_id, item_id):
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
         return None
+
 
 def move_item_to_column(token, item_id, column_id):
     """Moves an item (issue or pull request) to a specified column in a project."""
