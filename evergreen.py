@@ -302,6 +302,22 @@ def link_item_to_project(token, project_id, item_id):
         print(f"Request failed: {e}")
         return None
 
+def move_item_to_column(token, item_id, column_id):
+    """Moves an item (issue or pull request) to a specified column in a project."""
+    url = "https://api.github.com/graphql"
+    headers = {"Authorization": f"Bearer {token}"}
+    data = {
+        "query": f'mutation {{moveProjectV2Item(input: {{itemId: "{item_id}", columnId: "{column_id}"}}) {{item {{id}}}}}}'
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=data, timeout=20)
+        response.raise_for_status()
+        return response
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
+
 
 if __name__ == "__main__":
     main()  # pragma: no cover
