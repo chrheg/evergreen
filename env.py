@@ -104,9 +104,16 @@ so that we can keep our dependencies up to date and secure."
     if dry_run:
         if dry_run not in ("true", "false"):
             raise ValueError("DRY_RUN environment variable not 'true' or 'false'")
-        dry_run_bool = True
+        if dry_run == "true":
+            dry_run_bool = True
+        if dry_run == "false":
+            dry_run_bool = False
     else:
         dry_run_bool = False
+
+    project_id = os.getenv("PROJECT_ID")
+    if project_id and not project_id.isnumeric():
+        raise ValueError("PROJECT_ID environment variable is not numeric")
 
     return (
         organization,
@@ -119,4 +126,5 @@ so that we can keep our dependencies up to date and secure."
         body,
         created_after_date,
         dry_run_bool,
+        project_id,
     )
