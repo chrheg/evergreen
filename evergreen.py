@@ -24,6 +24,7 @@ def main():  # pragma: no cover
         body,
         created_after_date,
         dry_run,
+        project_id,
     ) = env.get_env_vars()
 
     # Auth to GitHub.com or GHE
@@ -86,6 +87,12 @@ def main():  # pragma: no cover
                 count_eligible += 1
                 issue = repo.create_issue(title, body)
                 print("\tCreated issue " + issue.html_url)
+                if project_id:
+                    issue_id = get_global_issue_id(
+                        token, organization, repo.name, issue.number
+                    )
+                    link_item_to_project(token, project_id, issue_id)
+                    print("\tLinked issue to project " + project_id)
         else:
             count_eligible += 1
             # Try to detect if the repo already has an open pull request for dependabot
@@ -96,6 +103,12 @@ def main():  # pragma: no cover
                 try:
                     pull = commit_changes(title, body, repo, dependabot_file)
                     print("\tCreated pull request " + pull.html_url)
+                    if project_id:
+                        pr_id = get_global_pr_id(
+                            token, organization, repo.name, pull.number
+                        )
+                        link_item_to_project(token, project_id, pr_id)
+                        print("\tLinked pull request to project " + project_id)
                 except github3.exceptions.NotFoundError:
                     print("\tFailed to create pull request. Check write permissions.")
                     continue
@@ -135,7 +148,7 @@ def enable_dependabot_security_updates(owner, repo, access_token):
 def get_repos_iterator(organization, repository_list, github_connection):
     """Get the repositories from the organization or list of repositories"""
     repos = []
-    if organization:
+    if organization and not repository_list:
         repos = github_connection.organization(organization).repositories()
     else:
         # Get the repositories from the repository_list
@@ -190,6 +203,104 @@ def commit_changes(title, body, repo, dependabot_file):
         title=title, body=body, head=branch_name, base=repo.default_branch
     )
     return pull
+
+def get_global_project_id(token, organization, number):
+    """Fetches the project ID from GitHub's GraphQL API."""
+    url = "https://api.github.com/graphql"
+    headers = {"Authorization": f"Bearer {token}"}
+    data = {
+        "query": f'query{{organization(login: "{organization}") {{projectV2(number: {number}){{id}}}}}}'
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=data, timeout=20)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
+
+    try:
+        return response.json()["data"]["organization"]["projectV2"]["id"]
+    except KeyError as e:
+        print(f"Failed to parse response: {e}")
+        return None
+
+
+def get_global_issue_id(token, organization, repository, issue_number):
+    """Fetches the issue ID from GitHub's GraphQL API"""
+    url = "https://api.github.com/graphql"
+    headers = {"Authorization": f"Bearer {token}"}
+    data = {
+        "query": f"""
+        query {{
+          repository(owner: "{organization}", name: "{repository}") {{
+            issue(number: {issue_number}) {{
+              id
+            }}
+          }}
+        }}
+        """
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=data, timeout=20)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
+
+    try:
+        return response.json()["data"]["repository"]["issue"]["id"]
+    except KeyError as e:
+        print(f"Failed to parse response: {e}")
+        return None
+
+
+def get_global_pr_id(token, organization, repository, pr_number):
+    """Fetches the pull request ID from GitHub's GraphQL API"""
+    url = "https://api.github.com/graphql"
+    headers = {"Authorization": f"Bearer {token}"}
+    data = {
+        "query": f"""
+        query {{
+          repository(owner: "{organization}", name: "{repository}") {{
+            pullRequest(number: {pr_number}) {{
+              id
+            }}
+          }}
+        }}
+        """
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=data, timeout=20)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
+
+    try:
+        return response.json()["data"]["repository"]["pullRequest"]["id"]
+    except KeyError as e:
+        print(f"Failed to parse response: {e}")
+        return None
+
+
+def link_item_to_project(token, project_id, item_id):
+    """Links an item (issue or pull request) to a project in GitHub."""
+    url = "https://api.github.com/graphql"
+    headers = {"Authorization": f"Bearer {token}"}
+    data = {
+        "query": f'mutation {{addProjectV2ItemById(input: {{projectId: "{project_id}", contentId: "{item_id}"}}) {{item {{id}}}}}}'
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=data, timeout=20)
+        response.raise_for_status()
+        return response
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
 
 
 if __name__ == "__main__":
