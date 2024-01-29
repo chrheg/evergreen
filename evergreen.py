@@ -204,6 +204,7 @@ def commit_changes(title, body, repo, dependabot_file):
     )
     return pull
 
+
 def get_global_project_id(token, organization, number):
     """Fetches the project ID from GitHub's GraphQL API."""
     url = "https://api.github.com/graphql"
