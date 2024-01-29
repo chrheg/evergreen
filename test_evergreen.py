@@ -9,6 +9,7 @@ from evergreen import (
     check_pending_pulls_for_duplicates,
     commit_changes,
     enable_dependabot_security_updates,
+    get_global_issue_id,
     get_global_pr_id,
     get_global_project_id,
     get_repos_iterator,
@@ -416,6 +417,75 @@ class TestGetGlobalProjectId(unittest.TestCase):
             )
             mock_print.assert_called_once_with("Failed to parse response: 'id'")
             self.assertIsNone(result)
+
+
+class TestGetGlobalIssueId(unittest.TestCase):
+    """Test the get_global_issue_id function in evergreen.py"""
+
+    @patch("requests.post")
+    def test_get_global_issue_id_success(self, mock_post):
+            """Test the get_global_issue_id function for a successful request"""
+            token = "my_token"
+            organization = "my_organization"
+            repository = "my_repository"
+            issue_number = 123
+
+            expected_response = {
+                    "data": {
+                            "repository": {
+                                    "issue": {
+                                            "id": "1234567890"
+                                    }
+                            }
+                    }
+            }
+
+            mock_post.return_value.status_code = 200
+            mock_post.return_value.json.return_value = expected_response
+
+            result = get_global_issue_id(token, organization, repository, issue_number)
+
+            mock_post.assert_called_once()
+            self.assertEqual(result, "1234567890")
+
+    @patch("requests.post")
+    def test_get_global_issue_id_request_failed(self, mock_post):
+        """Test the get_global_issue_id function when the request fails"""
+        token = "my_token"
+        organization = "my_organization"
+        repository = "my_repository"
+        issue_number = 123
+
+        mock_post.side_effect = requests.exceptions.RequestException("Request failed")
+
+        result = get_global_issue_id(token, organization, repository, issue_number)
+
+        mock_post.assert_called_once()
+        self.assertIsNone(result)
+
+    @patch("requests.post")
+    def test_get_global_issue_id_parse_response_failed(self, mock_post):
+        """Test the get_global_issue_id function when parsing the response fails"""
+        token = "my_token"
+        organization = "my_organization"
+        repository = "my_repository"
+        issue_number = 123
+
+        expected_response = {
+            "data": {
+                "repository": {
+                    "issue": {}
+                }
+            }
+        }
+
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = expected_response
+
+        result = get_global_issue_id(token, organization, repository, issue_number)
+
+        mock_post.assert_called_once()
+        self.assertIsNone(result)
 
 
 class TestGetGlobalPullRequestID(unittest.TestCase):
