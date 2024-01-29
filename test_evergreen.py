@@ -424,29 +424,29 @@ class TestGetGlobalIssueId(unittest.TestCase):
 
     @patch("requests.post")
     def test_get_global_issue_id_success(self, mock_post):
-            """Test the get_global_issue_id function for a successful request"""
-            token = "my_token"
-            organization = "my_organization"
-            repository = "my_repository"
-            issue_number = 123
+        """Test the get_global_issue_id function for a successful request"""
+        token = "my_token"
+        organization = "my_organization"
+        repository = "my_repository"
+        issue_number = 123
 
-            expected_response = {
-                    "data": {
-                            "repository": {
-                                    "issue": {
-                                            "id": "1234567890"
-                                    }
-                            }
-                    }
-            }
+        expected_response = {
+                "data": {
+                        "repository": {
+                                "issue": {
+                                        "id": "1234567890"
+                                }
+                        }
+                }
+        }
 
-            mock_post.return_value.status_code = 200
-            mock_post.return_value.json.return_value = expected_response
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = expected_response
 
-            result = get_global_issue_id(token, organization, repository, issue_number)
+        result = get_global_issue_id(token, organization, repository, issue_number)
 
-            mock_post.assert_called_once()
-            self.assertEqual(result, "1234567890")
+        mock_post.assert_called_once()
+        self.assertEqual(result, "1234567890")
 
     @patch("requests.post")
     def test_get_global_issue_id_request_failed(self, mock_post):
