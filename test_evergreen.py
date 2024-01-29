@@ -430,15 +430,7 @@ class TestGetGlobalIssueId(unittest.TestCase):
         repository = "my_repository"
         issue_number = 123
 
-        expected_response = {
-                "data": {
-                        "repository": {
-                                "issue": {
-                                        "id": "1234567890"
-                                }
-                        }
-                }
-        }
+        expected_response = {"data": {"repository": {"issue": {"id": "1234567890"}}}}
 
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = expected_response
@@ -471,13 +463,7 @@ class TestGetGlobalIssueId(unittest.TestCase):
         repository = "my_repository"
         issue_number = 123
 
-        expected_response = {
-            "data": {
-                "repository": {
-                    "issue": {}
-                }
-            }
-        }
+        expected_response = {"data": {"repository": {"issue": {}}}}
 
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = expected_response
