@@ -37,7 +37,7 @@ def main():  # pragma: no cover
         if not organization:
             raise ValueError(
                 "ORGANIZATION environment variable was not set. Please set it"
-            )        
+            )
         project_id = get_global_project_id(token, organization, project_id)
 
     # Get the repositories from the organization or list of repositories
