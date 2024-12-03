@@ -750,7 +750,7 @@ class TestAppendToGithubSummary(unittest.TestCase):
 
         append_to_github_summary(content, summary_file)
 
-        mock_file.assert_called_once_with(summary_file, "a")
+        mock_file.assert_called_once_with(summary_file, "a", encoding="utf-8")
         mock_file().write.assert_called_once_with(content + "\n")
 
     @patch("builtins.open", new_callable=unittest.mock.mock_open)
@@ -770,7 +770,7 @@ class TestAppendToGithubSummary(unittest.TestCase):
 
         append_to_github_summary(content)
 
-        mock_file.assert_called_once_with("/github/workspace/summary.md", "a")
+        mock_file.assert_called_once_with("/github/workspace/summary.md", "a", encoding="utf-8")
         mock_file().write.assert_called_once_with(content + "\n")
 
 
