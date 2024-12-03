@@ -543,7 +543,7 @@ def append_to_github_summary(content, summary_file="/github/workspace/summary.md
     Append content to the GitHub step summary file
     """
     if summary_file:
-        with open(summary_file, "a") as f:
+        with open(summary_file, "a", encoding="utf-8") as f:
             f.write(content + "\n")
 
 
