@@ -746,7 +746,7 @@ class TestAppendToGithubSummary(unittest.TestCase):
     def test_append_to_github_summary_with_file(self, mock_file):
         """Test that content is appended to the specified summary file."""
         content = "Test summary content"
-        summary_file = "/path/to/summary.md"
+        summary_file = "summary.md"
 
         append_to_github_summary(content, summary_file)
 
@@ -771,7 +771,7 @@ class TestAppendToGithubSummary(unittest.TestCase):
         append_to_github_summary(content)
 
         mock_file.assert_called_once_with(
-            "/github/workspace/summary.md", "a", encoding="utf-8"
+            "summary.md", "a", encoding="utf-8"
         )
         mock_file().write.assert_called_once_with(content + "\n")
 
