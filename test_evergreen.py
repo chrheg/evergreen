@@ -771,7 +771,7 @@ class TestAppendToGithubSummary(unittest.TestCase):
         append_to_github_summary(content)
 
         mock_file.assert_called_once_with("/github/workspace/summary.md", "a")
-        mock_file().write.assert_called_once_with(content + '\n')
+        mock_file().write.assert_called_once_with(content + "\n")
 
 
 if __name__ == "__main__":
