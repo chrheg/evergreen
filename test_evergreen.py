@@ -770,9 +770,7 @@ class TestAppendToGithubSummary(unittest.TestCase):
 
         append_to_github_summary(content)
 
-        mock_file.assert_called_once_with(
-            "summary.md", "a", encoding="utf-8"
-        )
+        mock_file.assert_called_once_with("summary.md", "a", encoding="utf-8")
         mock_file().write.assert_called_once_with(content + "\n")
 
 
