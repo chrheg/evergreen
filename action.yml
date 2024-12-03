@@ -4,9 +4,7 @@ author: "github"
 description: "A GitHub Action to request dependabot enablement on eligible repositories in an organization."
 runs:
   using: "docker"
-  image: Dockerfile
-  #image: "docker://ghcr.io/github/evergreen:v1"
-  options: --volume ${{ env.GITHUB_STEP_SUMMARY }}:/github/summary
+  image: "docker://ghcr.io/github/evergreen:v1"
 branding:
   icon: "file-plus"
   color: "green"

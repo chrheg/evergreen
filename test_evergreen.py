@@ -19,6 +19,7 @@ from evergreen import (
     is_dependabot_security_updates_enabled,
     is_repo_created_date_before,
     link_item_to_project,
+    append_to_github_summary,
 )
 
 
@@ -736,6 +737,40 @@ class TestCheckExistingConfig(unittest.TestCase):
         result = check_existing_config(mock_repo, "dependabot.yml")
 
         self.assertIsNone(result)
+
+class TestAppendToGithubSummary(unittest.TestCase):
+    """Test the append_to_github_summary function in evergreen.py"""
+
+    @patch("builtins.open", new_callable=unittest.mock.mock_open)
+    def test_append_to_github_summary_with_file(self, mock_file):
+        """Test that content is appended to the specified summary file."""
+        content = "Test summary content"
+        summary_file = "/path/to/summary.md"
+
+        append_to_github_summary(content, summary_file)
+
+        mock_file.assert_called_once_with(summary_file, 'a')
+        mock_file().write.assert_called_once_with(content + '\n')
+
+    @patch("builtins.open", new_callable=unittest.mock.mock_open)
+    def test_append_to_github_summary_without_summary_file(self, mock_file):
+        """Test that content is not written when summary_file is None or empty."""
+        content = "Test summary content"
+        summary_file = ""
+
+        append_to_github_summary(content, summary_file)
+
+        mock_file.assert_not_called()
+
+    @patch("builtins.open", new_callable=unittest.mock.mock_open)
+    def test_append_to_github_summary_with_default_file(self, mock_file):
+        """Test that content is appended to the default summary file when summary_file is not provided."""
+        content = "Test summary content"
+
+        append_to_github_summary(content)
+
+        mock_file.assert_called_once_with('/github/workspace/summary.md', 'a')
+        mock_file().write.assert_called_once_with(content + '\n')
 
 
 if __name__ == "__main__":

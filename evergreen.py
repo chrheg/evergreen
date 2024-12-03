@@ -271,9 +271,6 @@ def main():  # pragma: no cover
     # Append the summary content to the GitHub step summary file
     append_to_github_summary(summary_content)
 
-    # Set the summary content as an output
-    set_output("summary", summary_content)
-
     print(f"Done. {str(count_eligible)} repositories were eligible.")
 
 
@@ -540,15 +537,13 @@ def link_item_to_project(ghe, token, project_id, item_id):
         print(f"Request failed: {e}")
         return None
 
-def append_to_github_summary(content):
+def append_to_github_summary(content, summary_file='/github/workspace/summary.md'):
     """
     Append content to the GitHub step summary file
     """
-    summary_file = os.getenv('GITHUB_STEP_SUMMARY')
     if summary_file:
         with open(summary_file, 'a') as f:
             f.write(content + '\n')
-
 
 
 if __name__ == "__main__":
