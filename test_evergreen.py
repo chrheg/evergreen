@@ -7,6 +7,7 @@ from unittest.mock import MagicMock, patch
 import github3
 import requests
 from evergreen import (
+    append_to_github_summary,
     check_existing_config,
     check_pending_issues_for_duplicates,
     check_pending_pulls_for_duplicates,
@@ -19,7 +20,6 @@ from evergreen import (
     is_dependabot_security_updates_enabled,
     is_repo_created_date_before,
     link_item_to_project,
-    append_to_github_summary,
 )
 
 
