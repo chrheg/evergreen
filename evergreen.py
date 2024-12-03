@@ -212,12 +212,10 @@ def main():  # pragma: no cover
             continue
 
         # Get dependabot security updates enabled if possible
-        security_updates_enabled = False
         if enable_security_updates:
-            security_updates_enabled = is_dependabot_security_updates_enabled(
+            if not is_dependabot_security_updates_enabled(
                 ghe, repo.owner, repo.name, token
-            )
-            if security_updates_enabled:
+            ):
                 enable_dependabot_security_updates(ghe, repo.owner, repo.name, token)
 
         link = ""
@@ -265,7 +263,7 @@ def main():  # pragma: no cover
                     print("\tFailed to create pull request. Check write permissions.")
                     continue
         # Append the repository to the summary content
-        summary_content += f"| {repo.full_name} | {'✅' if security_updates_enabled else '❌'} | {follow_up_type} | [Link]({link}) |\n"
+        summary_content += f"| {repo.full_name} | {'✅' if enable_security_updates else '❌'} | {follow_up_type} | [Link]({link}) |\n"
 
     print(f"Done. {str(count_eligible)} repositories were eligible.")
     # Append the summary content to the GitHub step summary file
