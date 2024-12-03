@@ -95,7 +95,11 @@ def main():  # pragma: no cover
         summary_content += f"- **Batch Size:** {batch_size}\n"
 
     # Add the updated repositories table header
-    summary_content += "\n\n## 📋 Updated Repositories\n\n| Repository | 🔒 Security Updates Enabled | 🔄 Follow Up Type | 🔗 Link |\n| --- | --- | --- | --- |\n"
+    summary_content += (
+        "\n\n## 📋 Updated Repositories\n\n"
+        "| Repository | 🔒 Security Updates Enabled | 🔄 Follow Up Type | 🔗 Link |\n"
+        "| --- | --- | --- | --- |\n"
+    )
 
     # Iterate through the repositories and open an issue/PR if dependabot is not enabled
     count_eligible = 0
