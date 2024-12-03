@@ -738,6 +738,7 @@ class TestCheckExistingConfig(unittest.TestCase):
 
         self.assertIsNone(result)
 
+
 class TestAppendToGithubSummary(unittest.TestCase):
     """Test the append_to_github_summary function in evergreen.py"""
 
@@ -749,8 +750,8 @@ class TestAppendToGithubSummary(unittest.TestCase):
 
         append_to_github_summary(content, summary_file)
 
-        mock_file.assert_called_once_with(summary_file, 'a')
-        mock_file().write.assert_called_once_with(content + '\n')
+        mock_file.assert_called_once_with(summary_file, "a")
+        mock_file().write.assert_called_once_with(content + "\n")
 
     @patch("builtins.open", new_callable=unittest.mock.mock_open)
     def test_append_to_github_summary_without_summary_file(self, mock_file):
@@ -769,7 +770,7 @@ class TestAppendToGithubSummary(unittest.TestCase):
 
         append_to_github_summary(content)
 
-        mock_file.assert_called_once_with('/github/workspace/summary.md', 'a')
+        mock_file.assert_called_once_with("/github/workspace/summary.md", "a")
         mock_file().write.assert_called_once_with(content + '\n')
 
 

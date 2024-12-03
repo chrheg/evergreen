@@ -206,6 +206,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORGANIZATION: <YOUR_ORGANIZATION_GOES_HERE>
+
+      - name: Post evergreen job summary
+        run: cat summmary.md >> $GITHUB_STEP_SUMMARY
 ```
 
 #### Advanced
@@ -251,7 +254,7 @@ jobs:
           CREATED_AFTER_DATE: ${{ env.one_week_ago }}
       
       - name: Post evergreen job summary
-        run: cat summmary.md >> GITHUB_STEP_SUMMARY
+        run: cat summmary.md >> $GITHUB_STEP_SUMMARY
 ```
 
 #### Using GitHub app
@@ -286,7 +289,7 @@ jobs:
           GROUP_DEPENDENCIES: True
 
       - name: Post evergreen job summary
-        run: cat summmary.md >> GITHUB_STEP_SUMMARY
+        run: cat summmary.md >> $GITHUB_STEP_SUMMARY
 ```
 
 ## Local usage without Docker

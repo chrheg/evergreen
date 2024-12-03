@@ -537,6 +537,7 @@ def link_item_to_project(ghe, token, project_id, item_id):
         print(f"Request failed: {e}")
         return None
 
+
 def append_to_github_summary(content, summary_file="/github/workspace/summary.md"):
     """
     Append content to the GitHub step summary file
